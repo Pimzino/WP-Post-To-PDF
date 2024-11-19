@@ -62,6 +62,8 @@ Add the PDF download button anywhere using the shortcode:
 [wp_post_to_pdf]
 ```
 
+**Note**: Be aware that if you use this shortcode, the PDF download button will also appear in the generated PDF document. Consider this when placing the shortcode in your content.
+
 ### PHP Function
 Developers can programmatically generate PDFs using:
 ```php
@@ -70,6 +72,42 @@ if (function_exists('wp_post_to_pdf_generate')) {
     wp_post_to_pdf_generate($post_id);
 }
 ?>
+```
+
+## Building from Source
+
+To build the plugin from source, you'll need:
+- PowerShell 5.1 or higher
+- Administrator privileges
+- PowerShell Module: Microsoft.PowerShell.Archive (1.0.0.0 or higher)
+
+### Using build.ps1
+
+The plugin includes a PowerShell build script that creates a production-ready package. Here are some common usage examples:
+
+1. **Basic Production Build**
+```powershell
+.\build.ps1
+```
+
+2. **Development Build**
+```powershell
+.\build.ps1 -Environment development
+```
+
+3. **Custom Output Directory**
+```powershell
+.\build.ps1 -OutputPath "C:\builds"
+```
+
+### Build Script Parameters
+
+- `-PluginName`: Name of the plugin (default: "wp-post-to-pdf")
+- `-Environment`: Build environment, 'production' or 'development' (default: 'production')
+- `-OutputPath`: Custom output directory (default: ".\dist")
+- `-Verbose`: Show detailed progress information
+
+The build script will create a plugin package ready for WordPress installation.
 
 ## Support
 

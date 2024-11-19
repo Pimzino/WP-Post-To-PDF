@@ -7,17 +7,14 @@
     Builds a production-ready WordPress plugin package.
     
 .DESCRIPTION
-    Creates a minified, optimized deployment package for WordPress plugins.
-    Handles asset optimization, file exclusion, and package creation.
+    Creates an optimized deployment package for WordPress plugins.
+    Handles file exclusion and package creation.
     
 .PARAMETER PluginName
     The name of the plugin. Defaults to "wp-post-to-pdf"
     
 .PARAMETER Environment
     Build environment. Can be 'production' or 'development'. Defaults to 'production'
-    
-.PARAMETER SkipMinification
-    Skip the minification of CSS and JS files
     
 .PARAMETER OutputPath
     Custom output path for the build. Defaults to ".\dist"
@@ -29,7 +26,7 @@
     .\build.ps1 -PluginName "my-plugin" -Environment "development"
     
 .EXAMPLE
-    .\build.ps1 -SkipMinification -OutputPath "C:\builds"
+    .\build.ps1 -OutputPath "C:\builds"
     
 .NOTES
     Author: Your Name
@@ -47,9 +44,6 @@ param(
     [string]$Environment = 'production',
     
     [Parameter()]
-    [switch]$SkipMinification,
-    
-    [Parameter()]
     [string]$OutputPath = ".\dist",
     
     [Parameter()]
@@ -63,6 +57,7 @@ $ErrorActionPreference = "Stop"
 # Script Variables
 $script:startTime = Get-Date
 $script:sourceDir = $PSScriptRoot
+$script:TempPath = Join-Path $BuildDir "temp"
 
 # Initialize logging
 function Write-BuildLog {
@@ -92,8 +87,6 @@ function Write-BuildLog {
         Add-Content -Path ".\build.log" -Value $logMessage
     }
 }
-
-# Add these helper functions at the top after the existing Write-BuildLog function
 
 function Write-ProgressHeader {
     param([string]$Title)
@@ -150,46 +143,6 @@ function Get-PluginVersion {
     }
 }
 
-# Asset optimization functions
-function Optimize-CSS {
-    param([string]$Content)
-    
-    if ($SkipMinification) { return $Content }
-    
-    try {
-        $Content = $Content -replace "/\*[\s\S]*?\*/|//.*", ""
-        $Content = $Content -replace "\s+", " "
-        $Content = $Content -replace "\s*{\s*", "{"
-        $Content = $Content -replace "\s*}\s*", "}"
-        $Content = $Content -replace "\s*:\s*", ":"
-        $Content = $Content -replace "\s*;\s*", ";"
-        $Content = $Content -replace "\s*,\s*", ","
-        return $Content.Trim()
-    }
-    catch {
-        Write-BuildLog "CSS optimization failed: $_" -Level Warning
-        return $Content
-    }
-}
-
-function Optimize-JavaScript {
-    param([string]$Content)
-    
-    if ($SkipMinification) { return $Content }
-    
-    try {
-        $Content = $Content -replace "/\*[\s\S]*?\*/|//.*", ""
-        $Content = $Content -replace "\s+", " "
-        $Content = $Content -replace "\s*{\s*", "{"
-        $Content = $Content -replace "\s*}\s*", "}"
-        return $Content.Trim()
-    }
-    catch {
-        Write-BuildLog "JavaScript optimization failed: $_" -Level Warning
-        return $Content
-    }
-}
-
 # Main build process
 function Start-Build {
     try {
@@ -197,107 +150,57 @@ function Start-Build {
         Write-BuildLog "Starting build process at $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')" -Level Info
         Write-BuildLog "Plugin: $PluginName" -Level Info
         Write-BuildLog "Environment: $Environment" -Level Info
-        Write-BuildLog "Minification: $(-not $SkipMinification)" -Level Info
-        Write-BuildLog "Source Directory: $script:sourceDir" -Level Info
-        Write-BuildLog "Build Directory: $BuildDir" -Level Info
         Write-BuildLog "Output Path: $OutputPath" -Level Info
         
-        # Create necessary directories
-        Write-ProgressHeader "Initializing Build Environment"
-        $directories = @($BuildDir, $OutputPath)
-        foreach ($dir in $directories) {
-            Write-BuildLog "Creating directory: $dir" -Level Info
-            if (Test-Path $dir) {
-                Remove-Item $dir -Recurse -Force
-                Write-BuildLog "Cleaned existing directory" -Level Info
+        # Install Composer dependencies
+        Write-BuildLog "Installing Composer dependencies..." -Level Info
+        if (!(Test-Path (Join-Path $script:sourceDir "vendor"))) {
+            $composerResult = Invoke-Expression "composer install --no-dev --optimize-autoloader"
+            if ($LASTEXITCODE -ne 0) {
+                throw "Composer install failed: $composerResult"
             }
-            New-Item -ItemType Directory -Path $dir | Out-Null
+            Write-BuildLog "Composer dependencies installed successfully" -Level Success
+        } else {
+            Write-BuildLog "Vendor directory already exists, skipping Composer install" -Level Info
         }
         
-        # Get plugin version
-        Write-ProgressHeader "Detecting Plugin Version"
-        $version = Get-PluginVersion
-        Write-BuildLog "Building version: $version" -Level Success
+        Initialize-BuildEnvironment
+        $buildPath = Copy-ProjectFiles -Destination $script:TempPath
         
-        # Copy files
-        Write-ProgressHeader "Copying Project Files"
-        $tempDir = Join-Path $BuildDir "temp"
-        Copy-ProjectFiles -Destination $tempDir
+        # Create the distribution package
+        $distPath = New-Item -ItemType Directory -Path $OutputPath -Force
+        $zipPath = Join-Path $distPath "$PluginName.zip"
         
-        # Optimize assets if not skipped
-        if (-not $SkipMinification) {
-            Write-ProgressHeader "Optimizing Assets"
-            $assetTypes = @{
-                "CSS" = "*.css"
-                "JavaScript" = "*.js"
-            }
-            
-            foreach ($type in $assetTypes.Keys) {
-                $files = Get-ChildItem -Path $tempDir -Filter $assetTypes[$type] -Recurse
-                $total = @($files).Count
-                
-                if ($total -gt 0) {
-                    Write-BuildLog "Processing $total $type files..." -Level Info
-                    $current = 0
-                    
-                    foreach ($file in $files) {
-                        $current++
-                        Write-StepProgress -Step "Optimizing $type" -Current $current -Total $total
-                        
-                        $content = Get-Content $file.FullName -Raw
-                        if ($type -eq "CSS") {
-                            $optimized = Optimize-CSS -Content $content
-                        } else {
-                            $optimized = Optimize-JavaScript -Content $content
-                        }
-                        
-                        $minPath = $file.FullName -replace "\.$type$", ".min.$type"
-                        Set-Content -Path $minPath -Value $optimized -NoNewline
-                        Remove-Item $file.FullName
-                    }
-                    Write-BuildLog "Completed $type optimization" -Level Success
-                }
-            }
+        if (Test-Path $zipPath) {
+            Remove-Item $zipPath -Force
         }
         
-        # Create distribution package
-        Write-ProgressHeader "Creating Distribution Package"
-        $zipFile = Join-Path $OutputPath "$PluginName-$version.zip"
-        Write-BuildLog "Creating zip archive..." -Level Info
-        Compress-Archive -Path "$tempDir\*" -DestinationPath $zipFile -Force
+        Compress-Archive -Path "$buildPath\*" -DestinationPath $zipPath
+        Write-BuildLog "Created plugin package at: $zipPath" -Level Success
         
         # Cleanup
-        Write-ProgressHeader "Cleaning Up"
-        Write-BuildLog "Removing temporary files..." -Level Info
-        if (Test-Path $BuildDir) {
-            $tempFiles = Get-ChildItem -Path $BuildDir -Recurse
-            $tempFileCount = @($tempFiles).Count
-            Write-BuildLog "Cleaning up $tempFileCount temporary items..." -Level Info
-            Remove-Item $BuildDir -Recurse -Force
-            Write-BuildLog "Cleanup completed" -Level Success
+        if (Test-Path $script:TempPath) {
+            Remove-Item $script:TempPath -Recurse -Force
         }
         
-        # Build Summary
-        $duration = (Get-Date) - $script:startTime
-        Write-ProgressHeader "Build Summary"
         Write-BuildLog "Build completed successfully!" -Level Success
-        Write-BuildLog "Duration: $($duration.TotalSeconds.ToString('0.00')) seconds" -Level Success
-        Write-BuildLog "Output: $zipFile" -Level Success
-        Write-BuildLog "Plugin version: $version" -Level Success
-        Write-BuildLog "Environment: $Environment" -Level Success
-        
-        if (-not $SkipMinification) {
-            Write-BuildLog "Assets optimized: CSS and JavaScript" -Level Success
-        }
-        
-        Write-Host "`n========================================`n" -ForegroundColor Cyan
     }
     catch {
-        Write-ProgressHeader "Build Failed"
-        Write-BuildLog $_.Exception.Message -Level Error
-        Write-BuildLog "Stack trace:" -Level Error
-        Write-BuildLog $_.ScriptStackTrace -Level Error
-        exit 1
+        Write-BuildLog "Build failed: $_" -Level Error
+        throw $_
+    }
+}
+
+function Initialize-BuildEnvironment {
+    Write-ProgressHeader "Initializing Build Environment"
+    $directories = @($script:TempPath, $OutputPath)
+    foreach ($dir in $directories) {
+        Write-BuildLog "Creating directory: $dir" -Level Info
+        if (Test-Path $dir) {
+            Remove-Item $dir -Recurse -Force
+            Write-BuildLog "Cleaned existing directory" -Level Info
+        }
+        New-Item -ItemType Directory -Path $dir | Out-Null
     }
 }
 
@@ -307,19 +210,17 @@ function Copy-ProjectFiles {
     
     Write-BuildLog "Scanning source directory for files..." -Level Info
     
-    $excludePatterns = Get-Content (Join-Path $PSScriptRoot ".buildignore") -ErrorAction SilentlyContinue
-    if (-not $excludePatterns) {
-        $excludePatterns = @(
-            '\.git',
-            'node_modules',
-            'vendor[\\/]development',
-            '\.buildignore',
-            'build\.ps1',
-            'tests',
-            '.*\.log$'
-        )
-    }
-    
+    $excludePatterns = @(
+        '\.git',
+        'node_modules',
+        '\.buildignore',
+        'build\.ps1',
+        'build',
+        'dist',
+        'tests',
+        '.*\.log$'
+    )
+
     # Get all files first
     $allFiles = Get-ChildItem -Path $script:sourceDir -Recurse -File
     $filesToCopy = [System.Collections.ArrayList]::new()
@@ -331,13 +232,32 @@ function Copy-ProjectFiles {
         $totalScanned++
         Write-Progress -Activity "Analyzing Files" -Status "Scanned $totalScanned files" -PercentComplete (($totalScanned / $allFiles.Count) * 100)
         
-        $relativePath = $_.FullName.Substring($script:sourceDir.Length + 1)
+        $relativePath = $file.FullName.Substring($script:sourceDir.Length).TrimStart('\')
         $exclude = $false
-        
-        foreach ($pattern in $excludePatterns) {
-            if ($relativePath -match $pattern) {
+
+        # Special handling for vendor files
+        if ($relativePath -like "vendor*") {
+            # Always include these vendor paths
+            if (($relativePath -like "vendor\dompdf\*") -or
+                ($relativePath -like "vendor\phenx\*") -or
+                ($relativePath -like "vendor\sabberworm\*") -or
+                ($relativePath -like "vendor\masterminds\*") -or
+                ($relativePath -like "vendor\autoload.php") -or
+                ($relativePath -like "vendor\composer\*")) {
+                $exclude = $false
+                Write-BuildLog "Including vendor file: $relativePath" -Level Info
+            } else {
                 $exclude = $true
-                break
+                Write-BuildLog "Excluding vendor file: $relativePath" -Level Info
+            }
+        } else {
+            # Check other exclusion patterns
+            foreach ($pattern in $excludePatterns) {
+                if ($relativePath -match $pattern) {
+                    $exclude = $true
+                    Write-BuildLog "Excluded: $relativePath (matched pattern: $pattern)" -Level Info
+                    break
+                }
             }
         }
         
@@ -354,7 +274,7 @@ function Copy-ProjectFiles {
     $current = 0
     foreach ($file in $filesToCopy) {
         $current++
-        $relativePath = $file.FullName.Substring($script:sourceDir.Length + 1)
+        $relativePath = $file.FullName.Substring($script:sourceDir.Length)
         $targetPath = Join-Path $Destination $relativePath
         $targetDir = Split-Path $targetPath -Parent
         
@@ -376,6 +296,8 @@ function Copy-ProjectFiles {
     }
     Write-Host "" # New line after progress bar
     Write-BuildLog "Completed copying $($filesToCopy.Count) files" -Level Success
+    
+    return $Destination
 }
 
 # Start the build process
