@@ -39,6 +39,7 @@ SUPPORT.md
 instructions.md
 *.md
 !README.md
+readme.txt
 
 # WordPress specific
 *.log
