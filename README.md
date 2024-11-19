@@ -117,7 +117,7 @@ The build script will create a plugin package ready for WordPress installation.
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, and contribute to the project.
+We welcome contributions!
 
 ## License
 
@@ -132,12 +132,3 @@ Created and maintained by [Pimzino](https://x.com/pimzino).
 - [DOMPDF](https://github.com/dompdf/dompdf) - PHP HTML to PDF converter library
 - [Font Awesome](https://fontawesome.com/) - Icons used in the PDF download button
 - [Google Fonts](https://fonts.google.com/) - For additional font options in PDFs
-
-## Changelog
-
-### 1.0.0
-- Initial release
-- Core PDF generation functionality
-- Customizable settings panel
-- Role-based access control
-- Multilingual support
