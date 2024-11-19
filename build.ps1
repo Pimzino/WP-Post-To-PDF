@@ -169,7 +169,8 @@ function Start-Build {
         
         # Create the distribution package
         $distPath = New-Item -ItemType Directory -Path $OutputPath -Force
-        $zipPath = Join-Path $distPath "$PluginName.zip"
+        $version = Get-PluginVersion
+        $zipPath = Join-Path $distPath "$PluginName-$version.zip"
         
         if (Test-Path $zipPath) {
             Remove-Item $zipPath -Force
