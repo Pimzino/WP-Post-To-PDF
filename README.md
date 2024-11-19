@@ -117,7 +117,7 @@ The build script will create a plugin package ready for WordPress installation.
 
 ## Contributing
 
-We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to submit pull requests, report issues, and contribute to the project.
+We welcome contributions!
 
 ## License
 
