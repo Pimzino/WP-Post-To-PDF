@@ -1,0 +1,26 @@
+{
+    "name": "your-vendor/wp-post-to-pdf",
+    "description": "WordPress plugin to convert posts to PDF",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=7.2",
+        "dompdf/dompdf": "^2.0"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7",
+        "wp-coding-standards/wpcs": "^2.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7"
+    },
+    "scripts": {
+        "phpcs": "phpcs",
+        "phpcbf": "phpcbf",
+        "post-install-cmd": [
+            "phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

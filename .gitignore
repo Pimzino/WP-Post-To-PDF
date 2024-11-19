@@ -1,0 +1,73 @@
+# Dependencies
+/node_modules/
+/vendor/*
+!vendor/dompdf/
+!vendor/phenx/
+!vendor/sabberworm/
+!vendor/masterminds/
+
+# Build files
+*.zip
+*.tar.gz
+*.tgz
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Documentation files
+CONTRIBUTING.md
+DEPLOY.md
+SUPPORT.md
+instructions.md
+*.md
+!README.md
+
+# WordPress specific
+*.log
+wp-config.php
+wp-content/advanced-cache.php
+wp-content/backup-db/
+wp-content/backups/
+wp-content/blogs.dir/
+wp-content/cache/
+wp-content/upgrade/
+wp-content/uploads/
+wp-content/mu-plugins/
+wp-content/wp-cache-config.php
+
+# Testing and development
+/phpunit.xml
+.phpunit.result.cache
+/tests/coverage/
+*.cache
+
+# Composer
+composer.phar
+
+# NPM/Yarn
+npm-debug.log
+yarn-debug.log*
+yarn-error.log*
+.yarn-integrity
+
+# Optional: Ignore build artifacts if you're using a build process
+/dist/
+/build/

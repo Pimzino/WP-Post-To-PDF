@@ -1,0 +1,804 @@
+/* Main Layout */
+.wrap {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 30px;
+    background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+}
+
+/* Header Styles */
+.wrap h1 {
+    color: #1d2327;
+    font-size: 24px;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wrap h1::before {
+    content: '\f1c1';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: #2271b1;
+}
+
+/* Section Headers */
+.form-table th {
+    padding: 25px 10px 25px 0;
+    width: 280px;
+    color: #1d2327;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Form Elements */
+.form-table td {
+    padding: 20px 10px;
+}
+
+/* Input Fields */
+.wp-post-to-pdf-row input[type="text"],
+.wp-post-to-pdf-row select {
+    min-width: 300px;
+    padding: 8px 12px;
+    border: 2px solid #dcdcde;
+    border-radius: 6px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.wp-post-to-pdf-row input[type="text"]:hover,
+.wp-post-to-pdf-row select:hover {
+    border-color: #c3c4c7;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.wp-post-to-pdf-row input[type="text"]:focus,
+.wp-post-to-pdf-row select:focus {
+    border-color: #2271b1;
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+    transform: translateY(-1px);
+}
+
+/* Description Text */
+.description {
+    margin-top: 8px;
+    color: #646970;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* Preview Panel */
+.button-preview-panel {
+    background: #fff;
+    border: 2px solid #dcdcde;
+    border-radius: 8px;
+    margin: 30px 0;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-preview-panel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.preview-header {
+    padding: 15px 20px;
+    background: #f0f0f1;
+    border-bottom: 1px solid #dcdcde;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.preview-content {
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(45deg, #f6f7f7 25%, #ffffff 25%, #ffffff 50%, #f6f7f7 50%, #f6f7f7 75%, #ffffff 75%, #ffffff 100%);
+    background-size: 20px 20px;
+}
+
+/* Action Buttons */
+.action-buttons {
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 2px solid #e5e7eb;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.action-buttons .button {
+    padding: 8px 20px;
+    height: auto;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-buttons .button-primary {
+    background: #2271b1;
+    border-color: #2271b1;
+}
+
+.action-buttons .button-primary:hover {
+    background: #135e96;
+    border-color: #135e96;
+    transform: translateY(-1px);
+}
+
+.coffee-button {
+    background: #ffdd00 !important;
+    border-color: #ffdd00 !important;
+    color: #000 !important;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+}
+
+.coffee-button:hover {
+    background: #ffd000 !important;
+    border-color: #ffd000 !important;
+    transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 782px) {
+    .wrap {
+        margin: 15px;
+        padding: 20px;
+    }
+
+    .form-table th {
+        padding-bottom: 10px;
+        width: 100%;
+    }
+
+    .wp-post-to-pdf-row input[type="text"],
+    .wp-post-to-pdf-row select {
+        width: 100%;
+        max-width: none;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .action-buttons .button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Loading States */
+.loading {
+    position: relative;
+    pointer-events: none;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Interactive Elements */
+
+/* Font Weight Slider */
+.font-weight-slider {
+    appearance: none;
+    width: 200px;
+    height: 6px;
+    background: linear-gradient(to right, #2271b1, #72aee6);
+    border-radius: 3px;
+    outline: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.font-weight-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 2px solid #2271b1;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.font-weight-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 2px solid #2271b1;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.font-weight-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.font-weight-slider::-moz-range-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.font-weight-value {
+    display: inline-block;
+    min-width: 60px;
+    padding: 4px 8px;
+    margin-left: 10px;
+    background: #f0f0f1;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 13px;
+}
+
+/* Icon Select Animation */
+.icon-preview {
+    transition: all 0.3s ease;
+}
+
+.icon-preview:hover {
+    transform: scale(1.1);
+    color: #135e96;
+}
+
+/* Button Hover Effects */
+.action-buttons .button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-buttons .button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons .button:active {
+    transform: translateY(0);
+}
+
+/* Modal Animation */
+.modal {
+    transition: opacity 0.3s ease;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Preview Panel Interactions */
+.button-preview-panel {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-preview-panel:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth Section Transitions */
+.form-table tr {
+    transition: background-color 0.2s ease;
+}
+
+.form-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Notice Animation */
+.notice {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Field Wrapper */
+.field-wrapper {
+    position: relative;
+}
+
+.field-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Help Icons and Tooltips */
+.help-icon {
+    color: #787c82;
+    cursor: help;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.help-icon:hover {
+    color: #2271b1;
+}
+
+.help-icon[data-tooltip]:before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    padding: 8px 12px;
+    background: #1d2327;
+    color: #fff;
+    font-size: 13px;
+    line-height: 1.4;
+    border-radius: 4px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    width: max-content;
+    max-width: 250px;
+    white-space: normal;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.help-icon[data-tooltip]:after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    border: 6px solid transparent;
+    border-top-color: #1d2327;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+
+.help-icon[data-tooltip]:hover:before,
+.help-icon[data-tooltip]:hover:after {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Success Modal */
+.modal-content.success,
+.modal-content.warning {
+    text-align: center;
+    padding: 30px;
+}
+
+.modal-content.success i,
+.modal-content.warning i {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.modal-content.success i {
+    color: #00a32a;
+}
+
+.modal-content.warning i {
+    color: #d63638;
+}
+
+/* Form Validation */
+.field-wrapper.has-error input,
+.field-wrapper.has-error select {
+    border-color: #d63638;
+}
+
+.field-wrapper.has-error .error-message {
+    color: #d63638;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Settings Updated Notice */
+#settings-updated {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Keyboard Navigation */
+.help-icon:focus-visible {
+    outline: 2px solid #2271b1;
+    outline-offset: 2px;
+}
+
+/* Loading State */
+.button.is-busy {
+    color: transparent !important;
+    pointer-events: none;
+    position: relative;
+}
+
+.button.is-busy::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+/* Preview Button Styles */
+.preview-button-wrapper .pdf-download-button {
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+    background: var(--button-bg-color, #1C1A1C);
+    cursor: pointer;
+    transition: all 450ms ease-in-out;
+    margin: 15px auto;
+    text-decoration: none;
+    aspect-ratio: 3 / 1; /* Fixed aspect ratio */
+    border-radius: 1.5em; /* Half of height to maintain rounded corners */
+    color: var(--button-font-color, #AAAAAA);
+}
+
+.preview-button-wrapper .pdf-download-button i {
+    color: var(--button-font-color);
+    transition: all 800ms ease;
+    font-size: calc(var(--button-font-size, 16px) * 1.25);
+}
+
+.preview-button-wrapper .pdf-download-button .button-text {
+    color: var(--button-font-color);
+    font-size: var(--button-font-size, 16px);
+    transition: all 800ms ease;
+}
+
+.preview-button-wrapper .pdf-download-button:hover,
+.preview-button-wrapper .pdf-download-button:active {
+    background: var(--button-bg-color-hover) !important;
+    transform: translateY(-2px);
+}
+
+.preview-button-wrapper .pdf-download-button.hover-effect:hover,
+.preview-button-wrapper .pdf-download-button.hover-effect:active {
+    box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+               inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+               0px 0px 0px 4px rgba(255, 255, 255, 0.2),
+               0px 0px 180px 0px var(--button-bg-color-hover);
+}
+
+.preview-button-wrapper .pdf-download-button:hover .button-text,
+.preview-button-wrapper .pdf-download-button:hover i,
+.preview-button-wrapper .pdf-download-button:active .button-text,
+.preview-button-wrapper .pdf-download-button:active i {
+    color: var(--button-font-color-hover, white);
+    transform: scale(1.2);
+}
+
+/* Color Picker Field */
+.field-wrapper .color-picker {
+    padding: 0;
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.field-wrapper .color-picker:hover {
+    transform: scale(1.05);
+}
+
+.field-wrapper .color-value {
+    margin-left: 10px;
+    padding: 8px 12px;
+    background: #f0f0f1;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+/* Update preview button to use selected color */
+.preview-button-wrapper .pdf-download-button {
+    background: var(--button-bg-color, #1C1A1C);
+}
+
+/* Switch Styles */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #2271b1;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2271b1;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.switch-label {
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+.preview-button-wrapper .pdf-download-button {
+    /* ... existing styles ... */
+    align-items: center;
+    gap: 17px;
+}
+
+.preview-button-wrapper .pdf-download-button i {
+    color: var(--button-font-color);
+    transition: all 800ms ease;
+    font-size: calc(var(--button-font-size, 16px) * 1.25);
+    display: flex;
+    align-items: center;
+    margin-top: -2px; /* Slight adjustment to align with text */
+}
+
+/* Icon Select Styles */
+.icon-select option {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+}
+
+.icon-select option i {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* Remove icon preview since icons are now in dropdown */
+.icon-preview {
+    display: none;
+}
+
+/* Custom Icon Select Styles */
+.icon-select-wrapper {
+    position: relative;
+    width: 300px;
+}
+
+.icon-select-wrapper .selected-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 2px solid #dcdcde;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.icon-select-wrapper .selected-option:hover {
+    border-color: #c3c4c7;
+}
+
+.icon-select-wrapper .options-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 2px solid #dcdcde;
+    border-radius: 6px;
+    margin-top: 4px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.icon-select-wrapper.active .options-list {
+    display: block;
+}
+
+.icon-select-wrapper .option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.icon-select-wrapper .option:hover {
+    background-color: #f0f0f1;
+}
+
+.icon-select-wrapper .option.selected {
+    background-color: #f0f0f1;
+}
+
+.icon-select-wrapper .option i,
+.icon-select-wrapper .selected-option i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Remove old icon select styles */
+.icon-preview {
+    display: none;
+}
+
+.preview-button-wrapper .pdf-download-button.size-small {
+    width: 10em;
+    height: 3em;
+}
+
+.preview-button-wrapper .pdf-download-button.size-medium {
+    width: 15em;
+    height: 5em;
+}
+
+.preview-button-wrapper .pdf-download-button.size-large {
+    width: 20em;
+    height: 7em;
+}
+
+/* Preview Button Size Variations */
+.preview-button-wrapper .pdf-download-button.size-extra-small {
+    width: 8em;
+    height: 2.5em;
+    border-radius: 2em;
+    gap: 10px;
+}
+
+.preview-button-wrapper .pdf-download-button.size-small {
+    width: 12em;
+    height: 3.5em;
+    border-radius: 2.5em;
+    gap: 12px;
+}
+
+.preview-button-wrapper .pdf-download-button.size-medium {
+    width: 15em;
+    height: 5em;
+    border-radius: 3em;
+    gap: 17px;
+}
+
+.preview-button-wrapper .pdf-download-button.size-large {
+    width: 18em;
+    height: 6em;
+    border-radius: 3.5em;
+    gap: 20px;
+}
+
+.preview-button-wrapper .pdf-download-button.size-extra-large {
+    width: 22em;
+    height: 7em;
+    border-radius: 4em;
+    gap: 25px;
+}
+
+.preview-button-wrapper .pdf-download-button.size-wide {
+    width: 25em;
+    height: 4em;
+    border-radius: 2em;
+    gap: 15px;
+}
+
+.preview-button-wrapper .pdf-download-button.size-compact {
+    width: 10em;
+    height: 10em;
+    border-radius: 50%;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.preview-button-wrapper .pdf-download-button.size-slim {
+    width: 20em;
+    height: 3em;
+    border-radius: 1.5em;
+    gap: 12px;
+}
+
+/* Section Divider */
+.section-divider {
+    border: 0;
+    height: 1px;
+    background: #e5e7eb;
+    margin: 10px 0 20px;
+}

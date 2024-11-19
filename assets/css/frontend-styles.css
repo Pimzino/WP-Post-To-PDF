@@ -1,0 +1,231 @@
+.pdf-download-button {
+    border: none;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    background: var(--button-bg-color, #1C1A1C);
+    cursor: pointer;
+    transition: all 300ms ease !important;
+    margin: 15px auto;
+    text-decoration: none;
+    aspect-ratio: 3 / 1;
+    border-radius: 1.5em;
+    color: var(--button-font-color, #AAAAAA);
+    position: relative;
+    overflow: hidden;
+    padding: 0.5em 1.5em;
+}
+
+.pdf-download-button i {
+    display: inline-block;
+    color: var(--button-font-color, #AAAAAA);
+    transition: all 300ms ease !important;
+    will-change: transform;
+    position: relative;
+    min-width: max-content;
+    font-size: calc(var(--button-font-size, 16px) * 1.25);
+    margin-right: 0;
+    transform-origin: center;
+    vertical-align: middle;
+}
+
+.pdf-download-button .button-text {
+    display: inline-block;
+    color: var(--button-font-color, #AAAAAA);
+    transition: all 300ms ease !important;
+    will-change: transform;
+    position: relative;
+    min-width: max-content;
+    font-size: var(--button-font-size, 16px);
+    transform-origin: center;
+}
+
+.pdf-download-button .button-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+}
+
+.pdf-download-button:hover .button-text,
+.pdf-download-button:hover i,
+.pdf-download-button:active .button-text,
+.pdf-download-button:active i {
+    color: var(--button-font-color-hover, white);
+    transform: scale(1.1) !important;
+}
+
+/* Ensure spacing is maintained during hover */
+.pdf-download-button:hover .button-wrapper {
+    gap: 8px;
+}
+
+/* Font weight specific styles */
+.pdf-download-button[style*="font-weight: 300"] .button-text {
+    font-weight: 300;
+}
+
+.pdf-download-button[style*="font-weight: 500"] .button-text {
+    font-weight: 500;
+}
+
+.pdf-download-button[style*="font-weight: 700"] .button-text {
+    font-weight: 700;
+}
+
+/* Hover and Active states */
+.pdf-download-button:hover,
+.pdf-download-button:active {
+    background: var(--button-bg-color-hover) !important;
+    transform: translateY(-1px) !important;
+}
+
+.pdf-download-button.hover-effect:hover,
+.pdf-download-button.hover-effect:active {
+    box-shadow: inset 0px 1px 0px 0px rgba(255, 255, 255, 0.4),
+               inset 0px -4px 0px 0px rgba(0, 0, 0, 0.2),
+               0px 0px 0px 4px rgba(255, 255, 255, 0.2),
+               0px 0px 180px 0px var(--button-bg-color-hover);
+}
+
+/* Loading state modifications */
+.pdf-download-button.loading {
+    pointer-events: none;
+    opacity: 0.7;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    position: relative !important;
+}
+
+.pdf-download-button.loading .button-wrapper {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.pdf-download-button.loading::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Button size variations */
+.pdf-download-button.size-extra-small {
+    width: 8em;
+    height: 2.5em;
+    border-radius: 2em;
+    gap: 10px;
+}
+
+.pdf-download-button.size-small {
+    width: 12em;
+    height: 3.5em;
+    border-radius: 2.5em;
+    gap: 12px;
+}
+
+.pdf-download-button.size-medium {
+    width: 15em;
+    height: 5em;
+    border-radius: 3em;
+    gap: 8px;
+}
+
+.pdf-download-button.size-large {
+    width: 18em;
+    height: 6em;
+    border-radius: 3.5em;
+    gap: 20px;
+}
+
+.pdf-download-button.size-extra-large {
+    width: 22em;
+    height: 7em;
+    border-radius: 4em;
+    gap: 25px;
+}
+
+/* Container and wrapper base styles */
+.pdf-download-container {
+    width: 100%;
+    margin: 1.5em 0;
+    padding: 0;
+    box-sizing: border-box;
+    clear: both;
+}
+
+.pdf-download-wrapper {
+    display: block;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+/* Button alignment styles */
+.pdf-button-wrapper {
+    width: 100%;
+    margin: 1em 0;
+    display: flex;
+}
+
+.pdf-button-wrapper.top-left,
+.pdf-button-wrapper.bottom-left {
+    justify-content: flex-start;
+}
+
+.pdf-button-wrapper.top-center,
+.pdf-button-wrapper.bottom-center {
+    justify-content: center;
+}
+
+.pdf-button-wrapper.top-right,
+.pdf-button-wrapper.bottom-right {
+    justify-content: flex-end;
+}
+
+/* Shared alignment classes */
+.align-left {
+    text-align: left;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.pdf-download-button {
+    display: inline-block;
+}
+
+/* Reset any WordPress alignment classes that might interfere */
+.entry-content .pdf-download-wrapper,
+.post-content .pdf-download-wrapper {
+    text-align: unset;
+    margin-left: unset;
+    margin-right: unset;
+}
+
+.pdf-download-button {
+    display: inline-block !important;
+    position: relative !important;
+    margin: 0 !important;
+    float: none !important;
+}
+
+/* Clear floats */
+.pdf-download-container::after {
+    content: "" !important;
+    display: table !important;
+    clear: both !important;
+}
