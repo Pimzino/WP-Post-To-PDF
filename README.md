@@ -59,7 +59,7 @@ A powerful WordPress plugin that enables users to export blog posts to beautiful
 ### Shortcode
 Add the PDF download button anywhere using the shortcode:
 ```
-[wp_post_to_pdf]
+[post_to_pdf]
 ```
 
 **Note**: Be aware that if you use this shortcode, the PDF download button will also appear in the generated PDF document. Consider this when placing the shortcode in your content.
