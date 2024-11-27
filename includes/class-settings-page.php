@@ -232,6 +232,26 @@ class WP_Post_to_PDF_Settings {
             array($this, 'render_preview_section'),
             $this->page_slug
         );
+
+        // Add new Mass Export section
+        add_settings_section(
+            'wp_post_to_pdf_mass_export',
+            __('Mass Export Settings', 'wp-post-to-pdf'),
+            array($this, 'mass_export_section_callback'),
+            $this->page_slug
+        );
+
+        // Add content type selection field
+        add_settings_field(
+            'wp_post_to_pdf_content_type',
+            __('Content Type', 'wp-post-to-pdf'),
+            array($this, 'content_type_callback'),
+            $this->page_slug,
+            'wp_post_to_pdf_mass_export'
+        );
+
+        // Register the new setting
+        register_setting('wp_post_to_pdf_options', 'wp_post_to_pdf_content_type');
     }
 
     /**
@@ -954,6 +974,31 @@ class WP_Post_to_PDF_Settings {
                 <?php esc_html_e('Select from various button size presets.', 'wp-post-to-pdf'); ?>
             </p>
         </div>
+        <?php
+    }
+
+    /**
+     * Render the Mass Export section
+     *
+     * @return void
+     */
+    public function mass_export_section_callback() {
+        echo '<p>Configure settings for bulk PDF export of your content.</p>';
+    }
+
+    /**
+     * Render the content type selection field
+     *
+     * @return void
+     */
+    public function content_type_callback() {
+        $content_type = get_option('wp_post_to_pdf_content_type', 'posts');
+        ?>
+        <select name="wp_post_to_pdf_content_type" id="wp_post_to_pdf_content_type" class="regular-text">
+            <option value="posts" <?php selected($content_type, 'posts'); ?>>Posts Only</option>
+            <option value="pages" <?php selected($content_type, 'pages'); ?>>Pages Only</option>
+            <option value="both" <?php selected($content_type, 'both'); ?>>Both Posts and Pages</option>
+        </select>
         <?php
     }
 }
