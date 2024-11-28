@@ -16,9 +16,6 @@ A powerful WordPress plugin that enables users to export blog posts to beautiful
   - Preserves images and formatting
   - Supports custom post types
   - Maintains hyperlinks
-- **Access Control**:
-  - Role-based PDF generation permissions
-  - Restrict PDF access to specific user roles
 - **Multilingual Support**:
   - Fully translatable
   - RTL language support
