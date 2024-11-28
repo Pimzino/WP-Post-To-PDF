@@ -13,6 +13,9 @@
 
         // Initialize icon select
         initIconSelect();
+
+        // Initialize mass export functionality
+        initMassExport();
     });
 
     /**
@@ -202,6 +205,58 @@
             if (!$(e.target).closest('.icon-select-wrapper').length) {
                 $('.icon-select-wrapper').removeClass('active');
             }
+        });
+    }
+
+    /**
+     * Initialize mass export functionality
+     */
+    function initMassExport() {
+        $('#wp-post-to-pdf-mass-export').on('click', function() {
+            var $button = $(this);
+            var originalText = $button.text();
+            
+            $button.prop('disabled', true).text('Exporting...');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'mass_export_pdf',
+                    nonce: wp_post_to_pdf.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Create blob from base64 content
+                        var binary = atob(response.data.content);
+                        var array = new Uint8Array(binary.length);
+                        for (var i = 0; i < binary.length; i++) {
+                            array[i] = binary.charCodeAt(i);
+                        }
+                        var blob = new Blob([array], {type: 'application/zip'});
+
+                        // Create download link
+                        var url = window.URL.createObjectURL(blob);
+                        var a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = response.data.filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        
+                        showNotice('success', 'Export completed successfully!');
+                    } else {
+                        showNotice('error', 'Export failed: ' + response.data);
+                    }
+                },
+                error: function() {
+                    showNotice('error', 'Export failed. Please try again.');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text(originalText);
+                }
+            });
         });
     }
 

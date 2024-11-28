@@ -303,3 +303,19 @@ function Copy-ProjectFiles {
 
 # Start the build process
 Start-Build
+
+# Plugin metadata
+$metadata = @"
+=== WP Post to PDF ===
+Contributors: pimzino
+Tags: pdf, export, posts, print
+Requires at least: 5.2
+Tested up to: 6.4
+Requires PHP: 7.2
+Stable tag: 1.1.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Version: 1.1.0
+
+A powerful WordPress plugin that enables users to export blog posts to beautifully formatted, printable PDFs with extensive customization options.
+"@

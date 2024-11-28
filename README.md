@@ -5,6 +5,7 @@ A powerful WordPress plugin that enables users to export blog posts to beautiful
 ## Features
 
 - **One-Click PDF Generation**: Convert any post or page to PDF with a single click
+- **Mass Export Functionality**: Export all your posts to individual PDFs in a single ZIP file
 - **Extensive Customization Options**:
   - Custom PDF header and footer
   - Configurable page size and orientation
@@ -55,6 +56,11 @@ A powerful WordPress plugin that enables users to export blog posts to beautiful
 ### Basic Usage
 - A "Download PDF" button will automatically appear on your posts/pages (location configurable in settings)
 - Click the button to generate and download the PDF version of the content
+
+### Mass Export
+- Navigate to Settings > WP Post To PDF
+- In the Mass Export Settings section, select Posts Only option
+- Click "Export Now" to generate and download a ZIP file containing PDFs of all your posts
 
 ### Shortcode
 Add the PDF download button anywhere using the shortcode:

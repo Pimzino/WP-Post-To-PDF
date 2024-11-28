@@ -32,6 +32,9 @@ class WP_Post_to_PDF_Settings {
         
         // Add AJAX handler for reset settings
         add_action('wp_ajax_reset_pdf_settings', array($this, 'handle_reset_settings'));
+        
+        // Add AJAX handler for mass export
+        add_action('wp_ajax_mass_export_pdf', array($this, 'handle_mass_export'));
     }
 
     /**
@@ -252,6 +255,14 @@ class WP_Post_to_PDF_Settings {
 
         // Register the new setting
         register_setting('wp_post_to_pdf_options', 'wp_post_to_pdf_content_type');
+
+        // In the register_settings method, add this new section after the mass export section
+        add_settings_section(
+            'wp_post_to_pdf_mass_export_action',
+            '',
+            array($this, 'mass_export_action_callback'),
+            $this->page_slug
+        );
     }
 
     /**
@@ -589,6 +600,11 @@ class WP_Post_to_PDF_Settings {
             WP_POST_TO_PDF_VERSION,
             true
         );
+
+        // Add nonce for mass export
+        wp_localize_script('wp-post-to-pdf-admin', 'wp_post_to_pdf', array(
+            'nonce' => wp_create_nonce('wp_post_to_pdf_mass_export')
+        ));
 
         // Add Font Awesome
         wp_enqueue_style(
@@ -983,7 +999,7 @@ class WP_Post_to_PDF_Settings {
      * @return void
      */
     public function mass_export_section_callback() {
-        echo '<p>Configure settings for bulk PDF export of your content.</p>';
+        echo '<p>' . esc_html__('Perform bulk PDF export of your content.', 'wp-post-to-pdf') . '</p>';
     }
 
     /**
@@ -994,12 +1010,166 @@ class WP_Post_to_PDF_Settings {
     public function content_type_callback() {
         $content_type = get_option('wp_post_to_pdf_content_type', 'posts');
         ?>
-        <select name="wp_post_to_pdf_content_type" id="wp_post_to_pdf_content_type" class="regular-text">
-            <option value="posts" <?php selected($content_type, 'posts'); ?>>Posts Only</option>
-            <option value="pages" <?php selected($content_type, 'pages'); ?>>Pages Only</option>
-            <option value="both" <?php selected($content_type, 'both'); ?>>Both Posts and Pages</option>
-        </select>
+        <div class="field-wrapper">
+            <div class="field-input">
+                <select name="wp_post_to_pdf_content_type" id="wp_post_to_pdf_content_type" class="regular-text">
+                    <option value="posts" <?php selected($content_type, 'posts'); ?>>Posts Only</option>
+                </select>
+            </div>
+        </div>
         <?php
+    }
+
+    /**
+     * Render the Mass Export Action section
+     *
+     * @return void
+     */
+    public function mass_export_action_callback() {
+        ?>
+        <button type="button" id="wp-post-to-pdf-mass-export" class="button button-primary">
+            <?php esc_html_e('Export Now', 'wp-post-to-pdf'); ?>
+        </button>
+        <?php
+    }
+
+    /**
+     * Handle mass export of posts to PDF
+     */
+    public function handle_mass_export() {
+        try {
+            // Check nonce and permissions
+            check_ajax_referer('wp_post_to_pdf_mass_export', 'nonce');
+            if (!current_user_can('manage_options')) {
+                throw new Exception('Insufficient permissions');
+            }
+
+            // Get content type
+            $content_type = get_option('wp_post_to_pdf_content_type', 'posts');
+            
+            // For now, we'll only handle 'posts'
+            if ($content_type !== 'posts') {
+                throw new Exception('Only posts export is currently supported');
+            }
+
+            // Get all published posts
+            $posts = get_posts(array(
+                'post_type' => 'post',
+                'post_status' => 'publish',
+                'posts_per_page' => -1,
+            ));
+
+            if (empty($posts)) {
+                throw new Exception('No posts found to export');
+            }
+
+            // Check if ZipArchive is available
+            if (!class_exists('ZipArchive')) {
+                throw new Exception('PHP ZIP extension is not installed. Please run: sudo apt-get install php-zip');
+            }
+
+            // Create temporary directory for PDFs
+            $upload_dir = wp_upload_dir();
+            $temp_dir = $upload_dir['basedir'] . '/pdf_temp_' . uniqid();
+            
+            // Check if directory creation is successful
+            if (!wp_mkdir_p($temp_dir)) {
+                throw new Exception('Failed to create temporary directory');
+            }
+
+            // Initialize ZIP archive
+            $zip = new ZipArchive();
+            $zip_filename = $temp_dir . '/posts_export.zip';
+            
+            $zip_result = $zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            if ($zip_result !== TRUE) {
+                throw new Exception('Could not create ZIP archive. Error code: ' . $zip_result);
+            }
+
+            // Load Dompdf
+            require_once WP_POST_TO_PDF_PATH . 'vendor/autoload.php';
+            $options = new \Dompdf\Options();
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('isPhpEnabled', true);
+            $options->set('isRemoteEnabled', true);
+
+            foreach ($posts as $post) {
+                try {
+                    // Initialize Dompdf for each post
+                    $dompdf = new \Dompdf\Dompdf($options);
+                    
+                    // Get post content
+                    $content = apply_filters('the_content', $post->post_content);
+                    
+                    // Create HTML structure
+                    $html = '
+                    <html>
+                    <head>
+                        <style>
+                            body { font-family: Arial, sans-serif; }
+                            .title { font-size: 24px; font-weight: bold; text-align: center; margin-bottom: 20px; }
+                            .content { font-size: 12px; line-height: 1.6; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="title">' . esc_html($post->post_title) . '</div>
+                        <div class="content">' . $content . '</div>
+                    </body>
+                    </html>';
+
+                    // Load HTML into Dompdf
+                    $dompdf->loadHtml($html);
+                    
+                    // Set paper size and orientation
+                    $dompdf->setPaper('A4', 'portrait');
+                    
+                    // Render PDF
+                    $dompdf->render();
+                    
+                    // Get PDF content as string
+                    $pdf_content = $dompdf->output();
+
+                    // Add PDF to ZIP
+                    $safe_filename = sanitize_file_name($post->post_title . '.pdf');
+                    if (!$zip->addFromString($safe_filename, $pdf_content)) {
+                        throw new Exception('Failed to add PDF to ZIP for post: ' . $post->post_title);
+                    }
+                } catch (Exception $e) {
+                    error_log('Error processing post ' . $post->ID . ': ' . $e->getMessage());
+                    continue; // Continue with next post even if one fails
+                }
+            }
+
+            // Close ZIP file
+            if (!$zip->close()) {
+                throw new Exception('Failed to close ZIP file');
+            }
+
+            // Check if ZIP file exists and is readable
+            if (!file_exists($zip_filename) || !is_readable($zip_filename)) {
+                throw new Exception('ZIP file not found or not readable');
+            }
+
+            // Read the ZIP file
+            $zip_content = file_get_contents($zip_filename);
+            if ($zip_content === false) {
+                throw new Exception('Failed to read ZIP file');
+            }
+
+            // Clean up
+            unlink($zip_filename);
+            rmdir($temp_dir);
+
+            // Send ZIP file content and filename
+            wp_send_json_success(array(
+                'content' => base64_encode($zip_content),
+                'filename' => 'posts_export.zip'
+            ));
+
+        } catch (Exception $e) {
+            error_log('WP Post to PDF Export Error: ' . $e->getMessage());
+            wp_send_json_error($e->getMessage());
+        }
     }
 }
 
