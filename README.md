@@ -7,11 +7,8 @@ A powerful WordPress plugin that enables users to export blog posts to beautiful
 - **One-Click PDF Generation**: Convert any post or page to PDF with a single click
 - **Mass Export Functionality**: Export all your posts to individual PDFs in a single ZIP file
 - **Extensive Customization Options**:
-  - Custom PDF header and footer
-  - Configurable page size and orientation
   - Font selection and sizing
-  - Custom CSS styling support
-  - Margin control
+  - Button sizing
 - **Professional PDF Layout**:
   - Preserves images and formatting
   - Supports custom post types
