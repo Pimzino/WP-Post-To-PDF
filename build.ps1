@@ -175,6 +175,13 @@ function Start-Build {
             Remove-Item $zipPath -Force
         }
         
+        # Write metadata to readme.txt
+        $readmePath = Join-Path $buildPath "readme.txt"
+        Write-BuildLog "Writing plugin metadata to readme.txt..." -Level Info
+        $metadata = Get-PluginMetadata -Version $version
+        Set-Content -Path $readmePath -Value $metadata
+        Write-BuildLog "Plugin metadata written successfully" -Level Success
+
         Compress-Archive -Path "$buildPath\*" -DestinationPath $zipPath
         Write-BuildLog "Created plugin package at: $zipPath" -Level Success
         
@@ -300,21 +307,25 @@ function Copy-ProjectFiles {
     return $Destination
 }
 
-# Start the build process
-Start-Build
-
-# Plugin metadata
-$metadata = @"
+# Plugin metadata function
+function Get-PluginMetadata {
+    param([string]$Version)
+    
+    return @"
 === WP Post to PDF ===
 Contributors: pimzino
 Tags: pdf, export, posts, print
 Requires at least: 5.2
 Tested up to: 6.4
 Requires PHP: 7.2
-Stable tag: 1.1.0
+Stable tag: $Version
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Version: 1.1.0
+Version: $Version
 
 A powerful WordPress plugin that enables users to export blog posts to beautifully formatted, printable PDFs with extensive customization options.
 "@
+}
+
+# Start the build process
+Start-Build
