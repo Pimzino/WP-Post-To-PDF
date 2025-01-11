@@ -1013,9 +1013,17 @@ class WP_Post_to_PDF_Settings {
         <div class="field-wrapper">
             <div class="field-input">
                 <select name="wp_post_to_pdf_content_type" id="wp_post_to_pdf_content_type" class="regular-text">
-                    <option value="posts" <?php selected($content_type, 'posts'); ?>>Posts Only</option>
+                    <option value="posts" <?php selected($content_type, 'posts'); ?>><?php esc_html_e('Posts Only', 'wp-post-to-pdf'); ?></option>
+                    <option value="pages" <?php selected($content_type, 'pages'); ?>><?php esc_html_e('Pages Only', 'wp-post-to-pdf'); ?></option>
+                    <option value="both" <?php selected($content_type, 'both'); ?>><?php esc_html_e('Posts and Pages', 'wp-post-to-pdf'); ?></option>
                 </select>
+                <span class="help-icon" data-tooltip="<?php esc_attr_e('Choose which type of content to export to PDF.', 'wp-post-to-pdf'); ?>">
+                    <i class="fa-solid fa-circle-question"></i>
+                </span>
             </div>
+            <p class="description">
+                <?php esc_html_e('Select the type of content you want to export as PDF.', 'wp-post-to-pdf'); ?>
+            </p>
         </div>
         <?php
     }
@@ -1044,23 +1052,34 @@ class WP_Post_to_PDF_Settings {
                 throw new Exception('Insufficient permissions');
             }
 
-            // Get content type
-            $content_type = get_option('wp_post_to_pdf_content_type', 'posts');
+            // Get content type from AJAX request
+            $content_type = isset($_POST['content_type']) ? sanitize_text_field($_POST['content_type']) : 'posts';
             
-            // For now, we'll only handle 'posts'
-            if ($content_type !== 'posts') {
-                throw new Exception('Only posts export is currently supported');
-            }
-
-            // Get all published posts
-            $posts = get_posts(array(
-                'post_type' => 'post',
+            // Set up query args based on content type
+            $query_args = array(
                 'post_status' => 'publish',
                 'posts_per_page' => -1,
-            ));
+            );
+
+            switch ($content_type) {
+                case 'posts':
+                    $query_args['post_type'] = 'post';
+                    break;
+                case 'pages':
+                    $query_args['post_type'] = 'page';
+                    break;
+                case 'both':
+                    $query_args['post_type'] = array('post', 'page');
+                    break;
+                default:
+                    throw new Exception('Invalid content type selected');
+            }
+
+            // Get all published content
+            $posts = get_posts($query_args);
 
             if (empty($posts)) {
-                throw new Exception('No posts found to export');
+                throw new Exception('No content found to export');
             }
 
             // Check if ZipArchive is available
@@ -1079,7 +1098,7 @@ class WP_Post_to_PDF_Settings {
 
             // Initialize ZIP archive
             $zip = new ZipArchive();
-            $zip_filename = $temp_dir . '/posts_export.zip';
+            $zip_filename = $temp_dir . '/' . $content_type . '_export.zip';
             
             $zip_result = $zip->open($zip_filename, ZipArchive::CREATE | ZipArchive::OVERWRITE);
             if ($zip_result !== TRUE) {
@@ -1163,7 +1182,7 @@ class WP_Post_to_PDF_Settings {
             // Send ZIP file content and filename
             wp_send_json_success(array(
                 'content' => base64_encode($zip_content),
-                'filename' => 'posts_export.zip'
+                'filename' => $content_type . '_export.zip'
             ));
 
         } catch (Exception $e) {

@@ -215,6 +215,7 @@
         $('#wp-post-to-pdf-mass-export').on('click', function() {
             var $button = $(this);
             var originalText = $button.text();
+            var contentType = $('#wp_post_to_pdf_content_type').val();
             
             $button.prop('disabled', true).text('Exporting...');
 
@@ -223,7 +224,8 @@
                 type: 'POST',
                 data: {
                     action: 'mass_export_pdf',
-                    nonce: wp_post_to_pdf.nonce
+                    nonce: wp_post_to_pdf.nonce,
+                    content_type: contentType
                 },
                 success: function(response) {
                     if (response.success) {

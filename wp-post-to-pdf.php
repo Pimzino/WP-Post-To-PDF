@@ -3,7 +3,7 @@
  * Plugin Name: WP Post to PDF
  * Plugin URI: https://github.com/Pimzino/wp-post-to-pdf
  * Description: A powerful WordPress plugin that enables users to export blog posts to beautifully formatted, printable PDFs with extensive customization options.
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Pimzino
  * Author URI: https://x.com/pimzino
  * License: GPL v2 or later
@@ -20,7 +20,7 @@ if (!defined('WPINC')) {
 }
 
 // Plugin version
-define('WP_POST_TO_PDF_VERSION', '1.1.0');
+define('WP_POST_TO_PDF_VERSION', '1.2.0');
 
 // Plugin directory path
 define('WP_POST_TO_PDF_PATH', plugin_dir_path(__FILE__));
