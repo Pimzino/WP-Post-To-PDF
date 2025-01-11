@@ -22,11 +22,12 @@ class WP_Post_to_PDF_Generator {
      * Initialize the class and set its properties.
      */
     public function __construct() {
-        add_action('wp_ajax_generate_post_pdf', array($this, 'handle_pdf_generation'));
-        add_action('wp_ajax_nopriv_generate_post_pdf', array($this, 'handle_pdf_generation'));
-
-        // Include Composer autoloader
-        require_once WP_POST_TO_PDF_PATH . 'vendor/autoload.php';
+        // Add AJAX actions only if requirements are met
+        if (file_exists(WP_POST_TO_PDF_PATH . 'vendor/autoload.php')) {
+            require_once WP_POST_TO_PDF_PATH . 'vendor/autoload.php';
+            add_action('wp_ajax_generate_post_pdf', array($this, 'handle_pdf_generation'));
+            add_action('wp_ajax_nopriv_generate_post_pdf', array($this, 'handle_pdf_generation'));
+        }
     }
 
     /**

@@ -68,8 +68,12 @@
                         alert(wpPostToPDF.i18n.error);
                     }
                 },
-                error: function() {
-                    alert(wpPostToPDF.i18n.error);
+                error: function(jqXHR) {
+                    let errorMessage = wpPostToPDF.i18n.error;
+                    if (jqXHR.responseJSON && jqXHR.responseJSON.data && jqXHR.responseJSON.data.message) {
+                        errorMessage = jqXHR.responseJSON.data.message;
+                    }
+                    alert(errorMessage);
                 },
                 complete: function() {
                     // Remove loading state and restore original styles

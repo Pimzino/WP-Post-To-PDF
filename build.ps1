@@ -1,5 +1,4 @@
 #Requires -Version 5.1
-#Requires -RunAsAdministrator
 #Requires -Modules @{ ModuleName='Microsoft.PowerShell.Archive'; ModuleVersion='1.0.0.0' }
 
 <#
